@@ -27,6 +27,26 @@ static std::optional<std::vector<std::byte>> ReadFile(const std::string &path)
     return std::move(contents);
 }
 
+void simple_parse_input(float *s_x, float *s_y, float *e_x, float *e_y)
+{
+    float ps_x, ps_y, pe_x, pe_y;
+    std::cout << "Enter starting x and y coordinates (0 to 100): ";
+    std::cin >> ps_x;
+    std::cin >> ps_y;
+    std::cout << "Enter ending x and y coordinates (0 to 100): ";
+    std::cin >> pe_x;
+    std::cin >> pe_y;
+    if ((ps_x >= 0 && ps_x <= 100) && (ps_y >= 0 && ps_y <= 100) && (pe_x >= 0 && pe_x <= 100) && (pe_y >= 0 && pe_y <= 100)) {
+        *s_x = ps_x;
+        *s_y = ps_y;
+        *e_x = pe_x;
+        *e_y = pe_y;
+    }
+    else {
+        std::cout << "Using default values: " << *s_x << " " << *s_y << " " << *e_x << " " << *e_y << "\n";
+    }
+}
+
 int main(int argc, const char **argv)
 {    
     std::string osm_data_file = "";
@@ -56,11 +76,18 @@ int main(int argc, const char **argv)
     // user input for these values using std::cin. Pass the user input to the
     // RoutePlanner object below in place of 10, 10, 90, 90.
 
+    //assign some default values
+    float start_x = 10;
+    float start_y = 10;
+    float end_x = 90;
+    float end_y = 90;
+    simple_parse_input(&start_x, &start_y, &end_x, &end_y);
+    
     // Build Model.
     RouteModel model{osm_data};
 
     // Create RoutePlanner object and perform A* search.
-    RoutePlanner route_planner{model, 10, 10, 90, 90};
+    RoutePlanner route_planner{model, start_x, start_y, end_x, end_y};
     route_planner.AStarSearch();
 
     std::cout << "Distance: " << route_planner.GetDistance() << " meters. \n";
